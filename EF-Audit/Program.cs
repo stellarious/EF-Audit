@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace EF_Audit
 {
@@ -61,18 +62,27 @@ namespace EF_Audit
                     ClientIdClient = 2323,
                     ClientSet = client
                 };
+                
+                Stopwatch sw = new Stopwatch();
 
                 Console.WriteLine("Start Add()");
+                sw.Start();
                 db.ClientSets.Add(client);
-                Console.WriteLine("End Add()\n\nStart SaveChanges()");
+                sw.Stop();
+                Console.WriteLine("End Add(): elapsed={0}", sw.Elapsed);
+
+                
+                Console.WriteLine("\nStart SaveChanges()");
+                sw.Start();
                 db.SaveChanges();
-                Console.WriteLine("End SaveChanges()\n");
+                sw.Stop();
+                Console.WriteLine("End SaveChanges(): elapsed={0}", sw.Elapsed);
 
                 var query = from x in db.ClientSets //choose table
                             orderby x.Name
                             select x;
 
-                Console.WriteLine("Entities in db:");
+                Console.WriteLine("\nEntities in db:");
                 foreach(var item in query)
                 {
                     Console.WriteLine(item.Name);
