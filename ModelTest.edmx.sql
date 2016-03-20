@@ -2,15 +2,15 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 03/13/2016 04:25:14
+-- Date Created: 03/20/2016 15:13:56
 -- Generated from EDMX file: C:\Users\Администратор\documents\visual studio 2015\Projects\Test\Test\ModelTest.edmx
 -- --------------------------------------------------
 
-CREATE DATABASE TEST 
+create database Company
 
 SET QUOTED_IDENTIFIER OFF;
 GO
-USE [TEST];
+USE [Company];
 GO
 IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
 GO
@@ -19,17 +19,17 @@ GO
 -- Dropping existing FOREIGN KEY constraints
 -- --------------------------------------------------
 
-IF OBJECT_ID(N'[dbo].[FK_ZakaziClient]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[ClientSet] DROP CONSTRAINT [FK_ZakaziClient];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ZakaziTovar]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[TovarSet] DROP CONSTRAINT [FK_ZakaziTovar];
-GO
-IF OBJECT_ID(N'[dbo].[FK_ZakaziSkladi]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[SkladiSet] DROP CONSTRAINT [FK_ZakaziSkladi];
-GO
 IF OBJECT_ID(N'[dbo].[FK_ClientBank]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[BankSet] DROP CONSTRAINT [FK_ClientBank];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ZakazTovar]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[TovarSet] DROP CONSTRAINT [FK_ZakazTovar];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ZakazSklad]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[SkladSet] DROP CONSTRAINT [FK_ZakazSklad];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ZakazClient]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[ClientSet] DROP CONSTRAINT [FK_ZakazClient];
 GO
 
 -- --------------------------------------------------
@@ -45,8 +45,8 @@ GO
 IF OBJECT_ID(N'[dbo].[TovarSet]', 'U') IS NOT NULL
     DROP TABLE [dbo].[TovarSet];
 GO
-IF OBJECT_ID(N'[dbo].[SkladiSet]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[SkladiSet];
+IF OBJECT_ID(N'[dbo].[SkladSet]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[SkladSet];
 GO
 IF OBJECT_ID(N'[dbo].[BankSet]', 'U') IS NOT NULL
     DROP TABLE [dbo].[BankSet];
@@ -58,8 +58,8 @@ GO
 
 -- Creating table 'Tests'
 CREATE TABLE [dbo].[Tests] (
-    [IdZakaz] int IDENTITY(1,1) NOT NULL,
-    [Kolich] int  NULL,
+    [IdOrder] int IDENTITY(1,1) NOT NULL,
+    [Count] int  NULL,
     [Sum] int  NULL
 );
 GO
@@ -70,24 +70,24 @@ CREATE TABLE [dbo].[ClientSet] (
     [Name] nvarchar(max)  NOT NULL,
     [Adress] nvarchar(max)  NOT NULL,
     [Tel] nvarchar(max)  NOT NULL,
-    [ZakaziIdZakaz] int  NOT NULL
+    [OrderIdOrder] int  NOT NULL
 );
 GO
 
--- Creating table 'TovarSet'
-CREATE TABLE [dbo].[TovarSet] (
-    [IdTovar] int IDENTITY(1,1) NOT NULL,
+-- Creating table 'ProductSet'
+CREATE TABLE [dbo].[ProductSet] (
+    [IdProduct] int IDENTITY(1,1) NOT NULL,
     [Name] nvarchar(max)  NOT NULL,
-    [Csena] int  NULL,
-    [ZakaziIdZakaz] int  NOT NULL
+    [Price] int  NULL,
+    [OrderIdOrder] int  NOT NULL
 );
 GO
 
--- Creating table 'SkladiSet'
-CREATE TABLE [dbo].[SkladiSet] (
-    [IdSklad] int IDENTITY(1,1) NOT NULL,
+-- Creating table 'StorageSet'
+CREATE TABLE [dbo].[StorageSet] (
+    [IdStorage] int IDENTITY(1,1) NOT NULL,
     [Name] nvarchar(max)  NOT NULL,
-    [ZakaziIdZakaz] int  NOT NULL
+    [OrderIdOrder] int  NOT NULL
 );
 GO
 
@@ -96,7 +96,7 @@ CREATE TABLE [dbo].[BankSet] (
     [IdBank] int IDENTITY(1,1) NOT NULL,
     [Name] nvarchar(max)  NOT NULL,
     [Adress] nvarchar(max)  NOT NULL,
-    [Schet] nvarchar(max)  NULL,
+    [Acount] nvarchar(max)  NULL,
     [ClientIdClient] int  NOT NULL
 );
 GO
@@ -105,10 +105,10 @@ GO
 -- Creating all PRIMARY KEY constraints
 -- --------------------------------------------------
 
--- Creating primary key on [IdZakaz] in table 'Tests'
+-- Creating primary key on [IdOrder] in table 'Tests'
 ALTER TABLE [dbo].[Tests]
 ADD CONSTRAINT [PK_Tests]
-    PRIMARY KEY CLUSTERED ([IdZakaz] ASC);
+    PRIMARY KEY CLUSTERED ([IdOrder] ASC);
 GO
 
 -- Creating primary key on [IdClient] in table 'ClientSet'
@@ -117,16 +117,16 @@ ADD CONSTRAINT [PK_ClientSet]
     PRIMARY KEY CLUSTERED ([IdClient] ASC);
 GO
 
--- Creating primary key on [IdTovar] in table 'TovarSet'
-ALTER TABLE [dbo].[TovarSet]
-ADD CONSTRAINT [PK_TovarSet]
-    PRIMARY KEY CLUSTERED ([IdTovar] ASC);
+-- Creating primary key on [IdProduct] in table 'ProductSet'
+ALTER TABLE [dbo].[ProductSet]
+ADD CONSTRAINT [PK_ProductSet]
+    PRIMARY KEY CLUSTERED ([IdProduct] ASC);
 GO
 
--- Creating primary key on [IdSklad] in table 'SkladiSet'
-ALTER TABLE [dbo].[SkladiSet]
-ADD CONSTRAINT [PK_SkladiSet]
-    PRIMARY KEY CLUSTERED ([IdSklad] ASC);
+-- Creating primary key on [IdStorage] in table 'StorageSet'
+ALTER TABLE [dbo].[StorageSet]
+ADD CONSTRAINT [PK_StorageSet]
+    PRIMARY KEY CLUSTERED ([IdStorage] ASC);
 GO
 
 -- Creating primary key on [IdBank] in table 'BankSet'
@@ -139,49 +139,49 @@ GO
 -- Creating all FOREIGN KEY constraints
 -- --------------------------------------------------
 
--- Creating foreign key on [ZakaziIdZakaz] in table 'ClientSet'
+-- Creating foreign key on [OrderIdOrder] in table 'ProductSet'
+ALTER TABLE [dbo].[ProductSet]
+ADD CONSTRAINT [FK_OrderProduct]
+    FOREIGN KEY ([OrderIdOrder])
+    REFERENCES [dbo].[Tests]
+        ([IdOrder])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_OrderProduct'
+CREATE INDEX [IX_FK_OrderProduct]
+ON [dbo].[ProductSet]
+    ([OrderIdOrder]);
+GO
+
+-- Creating foreign key on [OrderIdOrder] in table 'StorageSet'
+ALTER TABLE [dbo].[StorageSet]
+ADD CONSTRAINT [FK_OrderStorage]
+    FOREIGN KEY ([OrderIdOrder])
+    REFERENCES [dbo].[Tests]
+        ([IdOrder])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_OrderStorage'
+CREATE INDEX [IX_FK_OrderStorage]
+ON [dbo].[StorageSet]
+    ([OrderIdOrder]);
+GO
+
+-- Creating foreign key on [OrderIdOrder] in table 'ClientSet'
 ALTER TABLE [dbo].[ClientSet]
-ADD CONSTRAINT [FK_ZakaziClient]
-    FOREIGN KEY ([ZakaziIdZakaz])
+ADD CONSTRAINT [FK_OrderClient]
+    FOREIGN KEY ([OrderIdOrder])
     REFERENCES [dbo].[Tests]
-        ([IdZakaz])
+        ([IdOrder])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
 GO
 
--- Creating non-clustered index for FOREIGN KEY 'FK_ZakaziClient'
-CREATE INDEX [IX_FK_ZakaziClient]
+-- Creating non-clustered index for FOREIGN KEY 'FK_OrderClient'
+CREATE INDEX [IX_FK_OrderClient]
 ON [dbo].[ClientSet]
-    ([ZakaziIdZakaz]);
-GO
-
--- Creating foreign key on [ZakaziIdZakaz] in table 'TovarSet'
-ALTER TABLE [dbo].[TovarSet]
-ADD CONSTRAINT [FK_ZakaziTovar]
-    FOREIGN KEY ([ZakaziIdZakaz])
-    REFERENCES [dbo].[Tests]
-        ([IdZakaz])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
-
--- Creating non-clustered index for FOREIGN KEY 'FK_ZakaziTovar'
-CREATE INDEX [IX_FK_ZakaziTovar]
-ON [dbo].[TovarSet]
-    ([ZakaziIdZakaz]);
-GO
-
--- Creating foreign key on [ZakaziIdZakaz] in table 'SkladiSet'
-ALTER TABLE [dbo].[SkladiSet]
-ADD CONSTRAINT [FK_ZakaziSkladi]
-    FOREIGN KEY ([ZakaziIdZakaz])
-    REFERENCES [dbo].[Tests]
-        ([IdZakaz])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
-
--- Creating non-clustered index for FOREIGN KEY 'FK_ZakaziSkladi'
-CREATE INDEX [IX_FK_ZakaziSkladi]
-ON [dbo].[SkladiSet]
-    ([ZakaziIdZakaz]);
+    ([OrderIdOrder]);
 GO
 
 -- Creating foreign key on [ClientIdClient] in table 'BankSet'
