@@ -27,7 +27,7 @@ namespace EF_Audit
         [Required]
         public string Tel { get; set; }
 
-        public int ZakaziIdZakaz { get; set; }
+        public int OrderIdOrder { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BankSet> BankSets { get; set; }

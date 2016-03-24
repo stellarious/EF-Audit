@@ -14,9 +14,9 @@ namespace EF_Audit
 
         public virtual DbSet<BankSet> BankSets { get; set; }
         public virtual DbSet<ClientSet> ClientSets { get; set; }
-        public virtual DbSet<SkladiSet> SkladiSets { get; set; }
+        public virtual DbSet<ProductSet> ProductSets { get; set; }
+        public virtual DbSet<StorageSet> StorageSets { get; set; }
         public virtual DbSet<Test> Tests { get; set; }
-        public virtual DbSet<TovarSet> TovarSets { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -29,19 +29,19 @@ namespace EF_Audit
             modelBuilder.Entity<Test>()
                 .HasMany(e => e.ClientSets)
                 .WithRequired(e => e.Test)
-                .HasForeignKey(e => e.ZakaziIdZakaz)
+                .HasForeignKey(e => e.OrderIdOrder)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Test>()
-                .HasMany(e => e.SkladiSets)
+                .HasMany(e => e.ProductSets)
                 .WithRequired(e => e.Test)
-                .HasForeignKey(e => e.ZakaziIdZakaz)
+                .HasForeignKey(e => e.OrderIdOrder)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Test>()
-                .HasMany(e => e.TovarSets)
+                .HasMany(e => e.StorageSets)
                 .WithRequired(e => e.Test)
-                .HasForeignKey(e => e.ZakaziIdZakaz)
+                .HasForeignKey(e => e.OrderIdOrder)
                 .WillCascadeOnDelete(false);
         }
     }

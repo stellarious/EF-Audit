@@ -96,7 +96,7 @@ CREATE TABLE [dbo].[BankSet] (
     [IdBank] int IDENTITY(1,1) NOT NULL,
     [Name] nvarchar(max)  NOT NULL,
     [Adress] nvarchar(max)  NOT NULL,
-    [Acount] nvarchar(max)  NULL,
+    [Account] nvarchar(max)  NULL,
     [ClientIdClient] int  NOT NULL
 );
 GO

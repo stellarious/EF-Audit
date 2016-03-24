@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Diagnostics;
 
 namespace EF_Audit
 {
@@ -11,73 +10,66 @@ namespace EF_Audit
     {
         static void Main(string[] args)
         {
+            ClientSet client1;
+
             using (var db = new BusinessModel())
             {
-                Console.Write("Begin\n...\n");
-                                
                 var test = new Test
                 {
-                    IdZakaz = 959955,
-                    Kolich = 1555,
+                    IdOrder = 959955,
+                    Count = 1555,
                     Sum = 3434,
-                    //add ClientSets, 
-                    //add SkladiSets,
-                    //add TovarSets 
+                    ClientSets = new List<ClientSet>(),
+                    ProductSets = new List<ProductSet>(),
+                    StorageSets = new List<StorageSet>()
                 };
 
-                var tovar = new TovarSet
+                var product = new ProductSet
                 {
-                    IdTovar = 2895,
+                    IdProduct = 2895,
                     Name = "Device",
-                    Csena = 3400,
-                    ZakaziIdZakaz = 2192,
+                    Price = 3400,
+                    OrderIdOrder = 2192,
                     Test = test
                 };
 
-                var sklad = new SkladiSet
+                var storage = new StorageSet
                 {
-                    IdSklad = 34342,
-                    Name = "Sklad1",
-                    ZakaziIdZakaz = 3677,
+                    IdStorage = 34342,
+                    Name = "Storage1",
+                    OrderIdOrder = 3677,
                     Test = test
                 };
 
                 var client = new ClientSet
                 {
-                    Adress = "Popova st.",
-                    //BankSets = System.Collections.Generic.ICollection<BankSet>,
                     IdClient = 123,
                     Name = "Alexey",
+                    Adress = "Popova st.",
                     Tel = "983459598",
-                    Test = test,
-                    ZakaziIdZakaz = 4545
+                    OrderIdOrder = 4545,
+                    BankSets = new List<BankSet>(),
+                    Test = test                    
                 };
 
-                var bank1 = new BankSet
+                var bank = new BankSet
                 {
                     IdBank = 1341,
                     Name = "Bank1",
                     Adress = "Nevsky pr.",
-                    Schet = "99.0",
+                    Acсount = "99.0",
                     ClientIdClient = 2323,
                     ClientSet = client
                 };
+
+                test.ClientSets.Add(client);
+                test.ProductSets.Add(product);
+                test.StorageSets.Add(storage);
+
+                //db.Tests.Add(test);
+                //
+                //db.SaveChanges();
                 
-                Stopwatch sw = new Stopwatch();
-
-                Console.WriteLine("Start Add()");
-                sw.Start();
-                db.ClientSets.Add(client);
-                sw.Stop();
-                Console.WriteLine("End Add(): elapsed={0}", sw.Elapsed);
-
-                
-                Console.WriteLine("\nStart SaveChanges()");
-                sw.Start();
-                db.SaveChanges();
-                sw.Stop();
-                Console.WriteLine("End SaveChanges(): elapsed={0}", sw.Elapsed);
-
                 var query = from x in db.ClientSets //choose table
                             orderby x.Name
                             select x;
@@ -85,9 +77,39 @@ namespace EF_Audit
                 Console.WriteLine("\nEntities in db:");
                 foreach(var item in query)
                 {
-                    Console.WriteLine(item.Name);
+                    Console.WriteLine("id: " + item.IdClient + " name: " + item.Name + " phone: " + item.Tel);
+                }
+
+                //update
+                client1 = db.ClientSets.Where(s => s.IdClient == 3).FirstOrDefault<ClientSet>();
+            }
+
+            if (client1 != null)
+            {
+                client1.Tel = "88005553535";
+            }
+
+            using (var newdbCtx = new BusinessModel())
+            {
+                newdbCtx.Entry(client1).State = System.Data.Entity.EntityState.Modified;
+                newdbCtx.SaveChanges();
+
+                //updated output
+                var query = from x in newdbCtx.ClientSets //choose table
+                            orderby x.Name
+                            select x;
+
+                Console.WriteLine("\nUpdated Entities in db:");
+                foreach (var item in query)
+                {
+                    Console.WriteLine("id: " + item.IdClient + " name: " + item.Name + " phone: " + item.Tel);
                 }
             }
+        }
+
+        static void init()
+        {
+            Console.Write("INIT()");
         }
     }
 }

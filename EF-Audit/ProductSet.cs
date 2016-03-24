@@ -6,18 +6,18 @@ namespace EF_Audit
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TovarSet")]
-    public partial class TovarSet
+    [Table("ProductSet")]
+    public partial class ProductSet
     {
         [Key]
-        public int IdTovar { get; set; }
+        public int IdProduct { get; set; }
 
         [Required]
         public string Name { get; set; }
 
-        public int? Csena { get; set; }
+        public int? Price { get; set; }
 
-        public int ZakaziIdZakaz { get; set; }
+        public int OrderIdOrder { get; set; }
 
         public virtual Test Test { get; set; }
     }

@@ -18,7 +18,7 @@ namespace EF_Audit
         [Required]
         public string Adress { get; set; }
 
-        public string Schet { get; set; }
+        public string Acñount { get; set; }
 
         public int ClientIdClient { get; set; }
 

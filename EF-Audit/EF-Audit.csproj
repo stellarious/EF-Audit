@@ -55,11 +55,11 @@
     <Compile Include="BankSet.cs" />
     <Compile Include="BusinessModel.cs" />
     <Compile Include="ClientSet.cs" />
+    <Compile Include="ProductSet.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SkladiSet.cs" />
+    <Compile Include="StorageSet.cs" />
     <Compile Include="Test.cs" />
-    <Compile Include="TovarSet.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
