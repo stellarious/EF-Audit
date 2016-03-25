@@ -10,7 +10,16 @@ namespace EF_Audit
     {
         static void Main(string[] args)
         {
-            ClientSet client1;
+            addEntity();
+            
+            updateEntity();
+
+            deleteEntity();
+        }
+
+        static void addEntity()
+        {
+            Console.Write("addEntity() start\n");
 
             using (var db = new BusinessModel())
             {
@@ -49,7 +58,7 @@ namespace EF_Audit
                     Tel = "983459598",
                     OrderIdOrder = 4545,
                     BankSets = new List<BankSet>(),
-                    Test = test                    
+                    Test = test
                 };
 
                 var bank = new BankSet
@@ -66,50 +75,99 @@ namespace EF_Audit
                 test.ProductSets.Add(product);
                 test.StorageSets.Add(storage);
 
-                //db.Tests.Add(test);
-                //
-                //db.SaveChanges();
-                
+                db.Tests.Add(test);                
+                db.SaveChanges();
+
                 var query = from x in db.ClientSets //choose table
                             orderby x.Name
                             select x;
 
                 Console.WriteLine("\nEntities in db:");
-                foreach(var item in query)
-                {
-                    Console.WriteLine("id: " + item.IdClient + " name: " + item.Name + " phone: " + item.Tel);
-                }
-
-                //update
-                client1 = db.ClientSets.Where(s => s.IdClient == 3).FirstOrDefault<ClientSet>();
-            }
-
-            if (client1 != null)
-            {
-                client1.Tel = "88005553535";
-            }
-
-            using (var newdbCtx = new BusinessModel())
-            {
-                newdbCtx.Entry(client1).State = System.Data.Entity.EntityState.Modified;
-                newdbCtx.SaveChanges();
-
-                //updated output
-                var query = from x in newdbCtx.ClientSets //choose table
-                            orderby x.Name
-                            select x;
-
-                Console.WriteLine("\nUpdated Entities in db:");
                 foreach (var item in query)
                 {
                     Console.WriteLine("id: " + item.IdClient + " name: " + item.Name + " phone: " + item.Tel);
                 }
             }
+
         }
 
-        static void init()
+        static void updateEntity()
         {
-            Console.Write("INIT()");
+            Console.Write("\nupdateEntity() start");
+
+            ClientSet client;
+
+            using (var db = new BusinessModel())
+            {
+
+	            client = db.ClientSets.Where(s => s.IdClient == 4).FirstOrDefault<ClientSet>();
+	
+	            if (client != null)
+	            {
+	                client.Tel = "88005553535";
+	            }
+            }
+
+            using (var newdbCtx = new BusinessModel()) //new ctx
+            {
+                if (client != null)
+                {
+	                newdbCtx.Entry(client).State = System.Data.Entity.EntityState.Modified;
+	                newdbCtx.SaveChanges();
+	
+	                //updated output
+	                var query = from x in newdbCtx.ClientSets //choose table
+	                            orderby x.Name
+	                            select x;
+	
+	                Console.WriteLine("\nUpdated Entities in db:");
+	                foreach (var item in query)
+	                {
+	                    Console.WriteLine("id: " + item.IdClient + " name: " + item.Name + " phone: " + item.Tel);
+	                }
+                }
+                else 
+                {
+                    Console.WriteLine("\nError: entity not found.");
+                }
+            }
         }
+
+        static void deleteEntity()
+        {
+            Console.Write("\ndeleteEntity() start");
+
+            ClientSet client;
+
+            using (var db = new BusinessModel())
+            {
+                client = db.ClientSets.Where(s => s.IdClient == 8).FirstOrDefault<ClientSet>();
+            }
+
+            using (var newdbCtx = new BusinessModel()) //new ctx
+            {
+                if (client != null)
+                {
+                    newdbCtx.Entry(client).State = System.Data.Entity.EntityState.Deleted;
+                    newdbCtx.SaveChanges();
+
+                    //updated output
+                    var query = from x in newdbCtx.ClientSets
+                                orderby x.Name
+                                select x;
+
+                    Console.WriteLine("\nUpdated Entities in db:");
+                    foreach (var item in query)
+                    {
+                        Console.WriteLine("id: " + item.IdClient + " name: " + item.Name + " phone: " + item.Tel);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("\nError: entity not found.");
+                }
+            }
+        }
+
     }
 }
