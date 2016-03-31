@@ -10,24 +10,33 @@ namespace EF_Audit
     {
         static void Main(string[] args)
         {
-            addEntity();
-            
-            updateEntity();
+            for (int i = 0; i < 10; i++)
+				addEntity(initEntity());
+			//
+            //for (int i = 0; i < 25; i++)
+			//	updateEntity(i);
+			//
+            //for (int i = 0; i < 55; i++)
+			//	deleteEntity(i);
 
-            deleteEntity();
+			showEntities();
         }
 
-        static void addEntity()
+        static int rnd()
         {
-            Console.Write("addEntity() start\n");
+            Random rand = new Random();
+            return rand.Next(100, 2000);
+        }
 
+        static Test initEntity()
+        {
             using (var db = new BusinessModel())
-            {
+            {                
                 var test = new Test
                 {
-                    IdOrder = 959955,
-                    Count = 1555,
-                    Sum = 3434,
+                    IdOrder = rnd(),
+                    Count = rnd(),
+                    Sum = rnd(),
                     ClientSets = new List<ClientSet>(),
                     ProductSets = new List<ProductSet>(),
                     StorageSets = new List<StorageSet>()
@@ -35,39 +44,39 @@ namespace EF_Audit
 
                 var product = new ProductSet
                 {
-                    IdProduct = 2895,
-                    Name = "Device",
-                    Price = 3400,
-                    OrderIdOrder = 2192,
+                    IdProduct = rnd(),
+                    Name = randomString(4, 'l'),
+                    Price = rnd(),
+                    OrderIdOrder = rnd(),
                     Test = test
                 };
 
                 var storage = new StorageSet
                 {
-                    IdStorage = 34342,
-                    Name = "Storage1",
-                    OrderIdOrder = 3677,
+                    IdStorage = rnd(),
+                    Name = randomString(7, 'l'),
+                    OrderIdOrder = rnd(),
                     Test = test
                 };
 
                 var client = new ClientSet
                 {
-                    IdClient = 123,
-                    Name = "Alexey",
+                    IdClient = rnd(),
+                    Name = randomString(6, 'l'),
                     Adress = "Popova st.",
-                    Tel = "983459598",
-                    OrderIdOrder = 4545,
+                    Tel = randomString(9, 'n'),
+                    OrderIdOrder = rnd(),
                     BankSets = new List<BankSet>(),
                     Test = test
                 };
 
                 var bank = new BankSet
                 {
-                    IdBank = 1341,
-                    Name = "Bank1",
-                    Adress = "Nevsky pr.",
-                    Acсount = "99.0",
-                    ClientIdClient = 2323,
+                    IdBank = rnd(),
+                    Name = randomString(5, 'l'),
+                    Adress = randomString(6, 'l') + " st.",
+                    Acсount = randomString(3, 'n') + ".0",
+                    ClientIdClient = rnd(),
                     ClientSet = client
                 };
 
@@ -75,23 +84,22 @@ namespace EF_Audit
                 test.ProductSets.Add(product);
                 test.StorageSets.Add(storage);
 
-                db.Tests.Add(test);                
-                db.SaveChanges();
-
-                var query = from x in db.ClientSets //choose table
-                            orderby x.Name
-                            select x;
-
-                Console.WriteLine("\nEntities in db:");
-                foreach (var item in query)
-                {
-                    Console.WriteLine("id: " + item.IdClient + " name: " + item.Name + " phone: " + item.Tel);
-                }
+                return test;
             }
-
         }
 
-        static void updateEntity()
+        static void addEntity(Test test)
+        {
+            Console.Write("addEntity() start\n");
+            using (var db = new BusinessModel())
+            {
+				//db.Tests.Attach(test); //attach to context
+                db.Tests.Add(test);    //attach to db(?)
+                db.SaveChanges();
+            }
+        }
+
+        static void updateEntity(int id)
         {
             Console.Write("\nupdateEntity() start");
 
@@ -100,7 +108,7 @@ namespace EF_Audit
             using (var db = new BusinessModel())
             {
 
-	            client = db.ClientSets.Where(s => s.IdClient == 4).FirstOrDefault<ClientSet>();
+	            client = db.ClientSets.Where(s => s.IdClient == id).FirstOrDefault<ClientSet>();
 	
 	            if (client != null)
 	            {
@@ -114,18 +122,7 @@ namespace EF_Audit
                 {
 	                newdbCtx.Entry(client).State = System.Data.Entity.EntityState.Modified;
 	                newdbCtx.SaveChanges();
-	
-	                //updated output
-	                var query = from x in newdbCtx.ClientSets //choose table
-	                            orderby x.Name
-	                            select x;
-	
-	                Console.WriteLine("\nUpdated Entities in db:");
-	                foreach (var item in query)
-	                {
-	                    Console.WriteLine("id: " + item.IdClient + " name: " + item.Name + " phone: " + item.Tel);
-	                }
-                }
+	            }
                 else 
                 {
                     Console.WriteLine("\nError: entity not found.");
@@ -133,7 +130,7 @@ namespace EF_Audit
             }
         }
 
-        static void deleteEntity()
+        static void deleteEntity(int id)
         {
             Console.Write("\ndeleteEntity() start");
 
@@ -141,26 +138,16 @@ namespace EF_Audit
 
             using (var db = new BusinessModel())
             {
-                client = db.ClientSets.Where(s => s.IdClient == 8).FirstOrDefault<ClientSet>();
+                client = db.ClientSets.Where(s => s.IdClient == id).FirstOrDefault<ClientSet>();
             }
 
             using (var newdbCtx = new BusinessModel()) //new ctx
             {
                 if (client != null)
                 {
-                    newdbCtx.Entry(client).State = System.Data.Entity.EntityState.Deleted;
+					newdbCtx.Entry(client).State = System.Data.Entity.EntityState.Deleted;
+					//newdbCtx.ClientSets.Remove(client);
                     newdbCtx.SaveChanges();
-
-                    //updated output
-                    var query = from x in newdbCtx.ClientSets
-                                orderby x.Name
-                                select x;
-
-                    Console.WriteLine("\nUpdated Entities in db:");
-                    foreach (var item in query)
-                    {
-                        Console.WriteLine("id: " + item.IdClient + " name: " + item.Name + " phone: " + item.Tel);
-                    }
                 }
                 else
                 {
@@ -169,5 +156,44 @@ namespace EF_Audit
             }
         }
 
+        /// <summary>
+        /// Return random string of letters or numbers: 
+        /// 'l' for letter string, 'n' for number string.
+        /// </summary>
+         public static string randomString(int length, char c)
+        {
+            var random = new Random();
+
+            if (c == 'l')
+            {
+                const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";                
+                return new string(Enumerable.Repeat(chars, length)
+                    .Select(s => s[random.Next(s.Length)]).ToArray());
+            }
+            if (c == 'n')
+            {
+                const string chars = "0123456789";
+                return new string(Enumerable.Repeat(chars, length)
+                    .Select(s => s[random.Next(s.Length)]).ToArray());
+            }
+            return "error";
+        }
+
+		public static void showEntities()
+		{
+ 			using (var db = new BusinessModel()) //new ctx
+            {
+                //updated output
+                var query = from x in db.ClientSets //choose table
+                            orderby x.Name
+                            select x;
+
+                Console.WriteLine("\nEntities in db:");
+                foreach (var item in query)
+                {
+                    Console.WriteLine("id: " + item.IdClient + " | name: " + item.Name + " | phone: " + item.Tel);
+                }
+			}
+		}
     }
 }
