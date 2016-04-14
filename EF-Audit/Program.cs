@@ -10,189 +10,186 @@ namespace EF_Audit
     {
         static void Main(string[] args)
         {
-            for (int i = 0; i < 10; i++)
-				addEntity(initEntity());
-			//
-            //for (int i = 0; i < 25; i++)
-			//	updateEntity(i);
-			//
-            //for (int i = 0; i < 55; i++)
-			//	deleteEntity(i);
+			AddEntity();
+			
+			//UpdateEntity();
 
-			showEntities();
+			//DeleteEntity();
+			
+			ShowEntities();
         }
 
-        static int rnd()
+        private static int Rnd()
         {
             Random rand = new Random();
             return rand.Next(100, 2000);
         }
 
-        static Test initEntity()
+        static Test InitEntity()
+        {
+			var test = new Test
+			{
+				IdOrder = Rnd(),
+				Count = Rnd(),
+				Sum = Rnd(),
+				ClientSets = new List<ClientSet>(),
+				ProductSets = new List<ProductSet>(),
+				StorageSets = new List<StorageSet>()
+			};
+
+			var product = new ProductSet
+			{
+				IdProduct = Rnd(),
+				Name = RandomLetString(4),
+				Price = Rnd(),
+				OrderIdOrder = Rnd(),
+				Test = test
+			};
+
+			var storage = new StorageSet
+			{
+				IdStorage = Rnd(),
+				Name = RandomLetString(7),
+				OrderIdOrder = Rnd(),
+				Test = test
+			};
+
+			var client = new ClientSet
+			{
+				IdClient = Rnd(),
+				Name = RandomLetString(6),
+				Adress = RandomLetString(6) + " st.",
+				Tel = RandomNumString(9),
+				OrderIdOrder = Rnd(),
+				BankSets = new List<BankSet>(),
+				Test = test
+			};
+
+			var bank = new BankSet
+			{
+				IdBank = Rnd(),
+				Name = RandomLetString(5),
+				Adress = RandomLetString(6) + " st.",
+				Acсount = RandomNumString(3) + ".0",
+				ClientIdClient = Rnd(),
+				ClientSet = client
+			};
+
+			//client.BankSets.Add(bank); //!
+			test.ClientSets.Add(client);
+			test.ProductSets.Add(product);
+			test.StorageSets.Add(storage);
+			
+			return test;
+        }
+
+        private static void AddEntity()
         {
             using (var db = new BusinessModel())
-            {                
-                var test = new Test
-                {
-                    IdOrder = rnd(),
-                    Count = rnd(),
-                    Sum = rnd(),
-                    ClientSets = new List<ClientSet>(),
-                    ProductSets = new List<ProductSet>(),
-                    StorageSets = new List<StorageSet>()
-                };
+            {
+				for (int j = 0; j < 5; j++) //1000
+				{
+					for (int i = 0; i < 100; i++)
+						db.Tests.Add(InitEntity());
 
-                var product = new ProductSet
-                {
-                    IdProduct = rnd(),
-                    Name = randomString(4, 'l'),
-                    Price = rnd(),
-                    OrderIdOrder = rnd(),
-                    Test = test
-                };
-
-                var storage = new StorageSet
-                {
-                    IdStorage = rnd(),
-                    Name = randomString(7, 'l'),
-                    OrderIdOrder = rnd(),
-                    Test = test
-                };
-
-                var client = new ClientSet
-                {
-                    IdClient = rnd(),
-                    Name = randomString(6, 'l'),
-                    Adress = "Popova st.",
-                    Tel = randomString(9, 'n'),
-                    OrderIdOrder = rnd(),
-                    BankSets = new List<BankSet>(),
-                    Test = test
-                };
-
-                var bank = new BankSet
-                {
-                    IdBank = rnd(),
-                    Name = randomString(5, 'l'),
-                    Adress = randomString(6, 'l') + " st.",
-                    Acсount = randomString(3, 'n') + ".0",
-                    ClientIdClient = rnd(),
-                    ClientSet = client
-                };
-
-                test.ClientSets.Add(client);
-                test.ProductSets.Add(product);
-                test.StorageSets.Add(storage);
-
-                return test;
+					Console.WriteLine("Saved.");
+					db.SaveChanges(); // every 100
+				}
+				
             }
         }
 
-        static void addEntity(Test test)
+        private static void UpdateEntity()
         {
-            Console.Write("addEntity() start\n");
+			ClientSet client;
             using (var db = new BusinessModel())
             {
-				//db.Tests.Attach(test); //attach to context
-                db.Tests.Add(test);    //attach to db(?)
-                db.SaveChanges();
+				for (int i = 1, j = 1; i < 1000 + 1; i++, j++)
+				{
+					client = db.ClientSets.FirstOrDefault(s => s.IdClient == i);
+
+					if (client != null)
+					{
+						client.Tel = "88005553535";
+					}
+					else
+					{
+						Console.WriteLine("\nError: entity not found.");
+					}
+
+					if(j == 100) //every 100
+					{
+						Console.WriteLine("Saved.");
+						db.SaveChanges();
+						j = 0;
+					}
+				}
             }
         }
 
-        static void updateEntity(int id)
+        private static void DeleteEntity()
         {
-            Console.Write("\nupdateEntity() start");
-
-            ClientSet client;
-
             using (var db = new BusinessModel())
             {
+				for (int i = 1, j = 1; i < 1000 + 1; i++, j++)
+				{
+					var client = db.ClientSets.FirstOrDefault(s => s.IdClient == i);
 
-	            client = db.ClientSets.Where(s => s.IdClient == id).FirstOrDefault<ClientSet>();
-	
-	            if (client != null)
-	            {
-	                client.Tel = "88005553535";
-	            }
-            }
+					if (client != null)
+					{
+						db.ClientSets.Remove(client);
+					}
+					else
+					{
+						Console.WriteLine("\nError: entity not found.");
+					}
 
-            using (var newdbCtx = new BusinessModel()) //new ctx
-            {
-                if (client != null)
-                {
-	                newdbCtx.Entry(client).State = System.Data.Entity.EntityState.Modified;
-	                newdbCtx.SaveChanges();
-	            }
-                else 
-                {
-                    Console.WriteLine("\nError: entity not found.");
-                }
+					if (j == 100) //every 100
+					{
+						Console.WriteLine("Saved.");
+						db.SaveChanges();
+						j = 0;
+					}
+				}
             }
         }
 
-        static void deleteEntity(int id)
-        {
-            Console.Write("\ndeleteEntity() start");
-
-            ClientSet client;
-
-            using (var db = new BusinessModel())
-            {
-                client = db.ClientSets.Where(s => s.IdClient == id).FirstOrDefault<ClientSet>();
-            }
-
-            using (var newdbCtx = new BusinessModel()) //new ctx
-            {
-                if (client != null)
-                {
-					newdbCtx.Entry(client).State = System.Data.Entity.EntityState.Deleted;
-					//newdbCtx.ClientSets.Remove(client);
-                    newdbCtx.SaveChanges();
-                }
-                else
-                {
-                    Console.WriteLine("\nError: entity not found.");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Return random string of letters or numbers: 
-        /// 'l' for letter string, 'n' for number string.
-        /// </summary>
-         public static string randomString(int length, char c)
+        private static string RandomLetString(int length)
         {
             var random = new Random();
-
-            if (c == 'l')
-            {
-                const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";                
-                return new string(Enumerable.Repeat(chars, length)
-                    .Select(s => s[random.Next(s.Length)]).ToArray());
-            }
-            if (c == 'n')
-            {
-                const string chars = "0123456789";
-                return new string(Enumerable.Repeat(chars, length)
-                    .Select(s => s[random.Next(s.Length)]).ToArray());
-            }
-            return "error";
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";                
+            return new string(Enumerable.Repeat(chars, length)
+		        .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-		public static void showEntities()
+		private static string RandomNumString(int length)
+		{
+			var random = new Random();
+			const string chars = "0123456789";
+			return new string(Enumerable.Repeat(chars, length)
+				.Select(s => s[random.Next(s.Length)]).ToArray());
+		}
+
+		private static void ShowEntities()
 		{
  			using (var db = new BusinessModel()) //new ctx
             {
-                //updated output
-                var query = from x in db.ClientSets //choose table
-                            orderby x.Name
-                            select x;
+				var query = db.ClientSets.OrderBy(x => x.Name).ToList();
 
-                Console.WriteLine("\nEntities in db:");
-                foreach (var item in query)
-                {
-                    Console.WriteLine("id: " + item.IdClient + " | name: " + item.Name + " | phone: " + item.Tel);
-                }
+                Console.WriteLine("Entities in db:");
+
+				if (query.Count() != 0)
+				{
+					foreach (var item in query)
+					{
+						Console.WriteLine("id: " + item.IdClient + "\tname: " + item.Name + "\tphone: " + item.Tel);
+					}
+				}
+				else
+				{
+					db.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('ClientSet', RESEED, 0);");
+					Console.WriteLine("none");
+				}
 			}
 		}
     }
