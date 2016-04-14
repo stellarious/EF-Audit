@@ -10,32 +10,14 @@ namespace EF_Audit
     {
         static void Main(string[] args)
         {
-			TestAddEntity(100);
+			AddEntity();
 			
-			//TestUpdateEntity(100);
+			//UpdateEntity();
 
-			//TestDeleteEntity(400);
+			//DeleteEntity();
 			
 			ShowEntities();
         }
-
-		private static void TestAddEntity(int iter)
-		{
-			for (int i = 0; i < iter; i++)
-				AddEntity(InitEntity());
-		}
-
-		private static void TestUpdateEntity(int iter)
-		{
-			for (int i = 0; i < iter; i++)
-				UpdateEntity(i);
-		}
-
-		private static void TestDeleteEntity(int iter)
-		{
-			for (int i = 0; i < iter; i++)
-				DeleteEntity(i);
-		}
 
         private static int Rnd()
         {
@@ -93,54 +75,81 @@ namespace EF_Audit
 				ClientSet = client
 			};
 
+			//client.BankSets.Add(bank); //!
 			test.ClientSets.Add(client);
 			test.ProductSets.Add(product);
 			test.StorageSets.Add(storage);
-
+			
 			return test;
         }
 
-        private static void AddEntity(Test test)
+        private static void AddEntity()
         {
             using (var db = new BusinessModel())
             {
-                db.Tests.Add(test);
-                db.SaveChanges();
+				for (int j = 0; j < 5; j++) //1000
+				{
+					for (int i = 0; i < 100; i++)
+						db.Tests.Add(InitEntity());
+
+					Console.WriteLine("Saved.");
+					db.SaveChanges(); // every 100
+				}
+				
             }
         }
 
-        private static void UpdateEntity(int id)
+        private static void UpdateEntity()
         {
+			ClientSet client;
             using (var db = new BusinessModel())
             {
-				var client = db.ClientSets.FirstOrDefault(s => s.IdClient == id);
-	
-	            if (client != null)
-	            {
-	                client.Tel = "88005553535";
-					db.SaveChanges();
-	            }
-				else
+				for (int i = 1, j = 1; i < 1000 + 1; i++, j++)
 				{
-					Console.WriteLine("\nError: entity not found.");
+					client = db.ClientSets.FirstOrDefault(s => s.IdClient == i);
+
+					if (client != null)
+					{
+						client.Tel = "88005553535";
+					}
+					else
+					{
+						Console.WriteLine("\nError: entity not found.");
+					}
+
+					if(j == 100) //every 100
+					{
+						Console.WriteLine("Saved.");
+						db.SaveChanges();
+						j = 0;
+					}
 				}
             }
         }
 
-        private static void DeleteEntity(int id)
+        private static void DeleteEntity()
         {
             using (var db = new BusinessModel())
             {
-				var client = db.ClientSets.FirstOrDefault(s => s.IdClient == id);
+				for (int i = 1, j = 1; i < 1000 + 1; i++, j++)
+				{
+					var client = db.ClientSets.FirstOrDefault(s => s.IdClient == i);
 
-				if (client != null)
-				{
-					db.ClientSets.Remove(client);
-					db.SaveChanges();
-				} 
-				else
-				{
-					Console.WriteLine("\nError: entity not found.");
+					if (client != null)
+					{
+						db.ClientSets.Remove(client);
+					}
+					else
+					{
+						Console.WriteLine("\nError: entity not found.");
+					}
+
+					if (j == 100) //every 100
+					{
+						Console.WriteLine("Saved.");
+						db.SaveChanges();
+						j = 0;
+					}
 				}
             }
         }
