@@ -87,7 +87,7 @@ namespace EF_Audit
         {
             using (var db = new BusinessModel())
             {
-				for (int j = 0; j < 5; j++) //1000
+				for (int j = 0; j < 10; j++) //1000
 				{
 					for (int i = 0; i < 100; i++)
 						db.Tests.Add(InitEntity());
