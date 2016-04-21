@@ -7,7 +7,7 @@
 3. [Реализация](http://www.exceptionnotfound.net/entity-change-tracking-using-dbcontext-in-entity-framework-6/) трекинга средставами классов `DbChangeTracker` и  `DbEntityEntry` самого EF. 
 Недостатки реализации: аудит не ведется для новых сущностей, поддержка только single-column primary keys.
 
-4. [Tracker Enabled DbContext](http://bilal-fazlani.blogspot.ru/2013/09/adding-log-audit-feature-to-entity.htmlhttps://www.nuget.org/packages/TrackerEnabledDbContext) - трекер в репозитории nuget. Хранит данные о том кто, когда и что изменил. Позволяет выбирать таблицы или столбцы для отслеживания.
+4. [Tracker Enabled DbContext](http://bilal-fazlani.blogspot.ru/2013/09/adding-log-audit-feature-to-entity.html) - трекер в [репозитории](https://www.nuget.org/packages/TrackerEnabledDbContext) nuget. Хранит данные о том кто, когда и что изменил. Позволяет выбирать таблицы или столбцы для отслеживания.
 
 5. [Реализация](http://www.codeproject.com/Articles/34491/Implementing-Audit-Trail-using-Entity-Framework-Pa) аудита средствами EF, позволяющая откатываться на определенный промежуток времени.
 
