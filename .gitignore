@@ -1,3 +1,5 @@
 *.suo
 EF-Audit/bin
 EF-Audit/obj
+ChngTracker/bin
+ChngTracker/obj
