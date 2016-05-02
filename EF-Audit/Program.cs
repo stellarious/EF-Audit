@@ -12,7 +12,7 @@ namespace EF_Audit
 		{
 			//AddEntity();
 			//UpdateEntity();
-			DeleteEntity();
+			//DeleteEntity();
 
 			ShowEntities();
 		}
