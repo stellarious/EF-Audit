@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EF-Audit", "EF-Audit\EF-Aud
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChngTracker", "ChngTracker\ChngTracker.csproj", "{59EC8634-168A-409A-8BC0-91D9B178D194}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackerEnabledCtx", "TrackerEnabledCtx\TrackerEnabledCtx.csproj", "{D321F845-8F3D-468F-BC78-E6DAD8D49A01}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{59EC8634-168A-409A-8BC0-91D9B178D194}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59EC8634-168A-409A-8BC0-91D9B178D194}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{59EC8634-168A-409A-8BC0-91D9B178D194}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D321F845-8F3D-468F-BC78-E6DAD8D49A01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D321F845-8F3D-468F-BC78-E6DAD8D49A01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D321F845-8F3D-468F-BC78-E6DAD8D49A01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D321F845-8F3D-468F-BC78-E6DAD8D49A01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
